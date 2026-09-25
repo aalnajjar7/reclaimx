@@ -1,8 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-ReclaimX — Telegram Auto Poster
-"""
 
 import os
 import json
@@ -18,12 +15,13 @@ CHANNEL_ID = os.environ.get("CHANNEL_ID", "").strip()
 TZ_NAME = os.environ.get("TIMEZONE", "Africa/Cairo").strip()
 
 if not BOT_TOKEN or not CHANNEL_ID:
-    print("❌ خطأ: BOT_TOKEN أو CHANNEL_ID غير موجود")
+    print("ERROR: BOT_TOKEN or CHANNEL_ID missing")
     sys.exit(1)
 
 TZ = ZoneInfo(TZ_NAME)
 START_DATE = datetime(2026, 1, 1, tzinfo=TZ)
 MATCH_WINDOW = 8
+MATCH_WINDOW_BACK = 150
 
 
 def load_json(filename):
@@ -51,23 +49,23 @@ def send_telegram(text):
             body = resp.read().decode("utf-8")
             if '"ok":true' in body:
                 return True
-            print(f"⚠️ استجابة غير متوقعة: {body[:300]}")
+            print("Unexpected response: " + body[:300])
             return False
     except Exception as e:
-        print(f"❌ خطأ في الإرسال: {e}")
+        print("Send error: " + str(e))
         return False
 
 
 def post_key(cycle_day, post):
     h = hashlib.md5(post["text"].encode("utf-8")).hexdigest()[:8]
-    return f"d{cycle_day}_{post['time']}_{h}"
+    return "d" + str(cycle_day) + "_" + post["time"] + "_" + h
 
 
 def main():
     try:
         data = load_json("posts.json")
     except Exception as e:
-        print(f"❌ فشل قراءة posts.json: {e}")
+        print("Failed to read posts.json: " + str(e))
         sys.exit(1)
 
     try:
@@ -85,8 +83,8 @@ def main():
     cycle_day = (days_since % cycle_days) + 1
     now_minutes = now.hour * 60 + now.minute
 
-    print(f"🕐 الوقت: {now.strftime('%Y-%m-%d %H:%M')} ({TZ_NAME})")
-    print(f"📅 يوم الدورة: {cycle_day} من {cycle_days}")
+    print("Time: " + now.strftime("%Y-%m-%d %H:%M") + " (" + TZ_NAME + ")")
+    print("Cycle day: " + str(cycle_day) + " of " + str(cycle_days))
 
     matched = []
     for post in posts:
@@ -97,25 +95,25 @@ def main():
         except Exception:
             continue
         post_minutes = hh * 60 + mm
-        if abs(post_minutes - now_minutes) <= MATCH_WINDOW:
+        if (now_minutes - MATCH_WINDOW_BACK) <= post_minutes <= (now_minutes + MATCH_WINDOW):
             key = post_key(cycle_day, post)
             if key in state["sent"]:
-                print(f"⏭️ مُرسَل مسبقاً: {post['time']}")
+                print("Already sent: " + post["time"])
                 continue
             matched.append((key, post))
 
     if not matched:
-        print("ℹ️ لا توجد منشورات مطابقة الآن.")
+        print("No matching posts right now.")
         save_json("state.json", state)
         return
 
     for key, post in matched:
-        print(f"📤 إرسال منشور {post['time']}...")
+        print("Sending post at " + post["time"] + "...")
         if send_telegram(post["text"]):
             state["sent"].append(key)
-            print(f"✅ تم الإرسال: {post['time']}")
+            print("Sent: " + post["time"])
         else:
-            print(f"❌ فشل الإرسال: {post['time']}")
+            print("Failed: " + post["time"])
 
     state["sent"] = state["sent"][-800:]
     save_json("state.json", state)
