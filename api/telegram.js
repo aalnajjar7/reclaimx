@@ -3,7 +3,7 @@ module.exports = async (req, res) => {
     return res.status(200).send("ok");
   }
 
-  const BOT_TOKEN = "8681635672:AAGi-Q9LAw6U-YyrF71uOd1bI20hnX4Sa_Y";
+  const BOT_TOKEN = "8996407648:AAE4zGF-CAadrCkLFE_p_K9yWuWOKv2pALE";
   const WEBSITE_URL = "https://reclaimx.site.je/";
   const INSTAGRAM_URL = "https://www.instagram.com/reclaimx.me";
   const TELEGRAM_CONTACT = "@reclaimxx";
