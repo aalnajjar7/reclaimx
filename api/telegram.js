@@ -5,6 +5,8 @@ module.exports = async (req, res) => {
 
   const BOT_TOKEN = "8681635672:AAGi-Q9LAw6U-YyrF71uOd1bI20hnX4Sa_Y";
   const WEBSITE_URL = "https://reclaimx.site.je/";
+  const INSTAGRAM_URL = "https://www.instagram.com/reclaimx.me";
+  const TELEGRAM_CONTACT = "@reclaimxx";
 
   const update = req.body;
 
@@ -12,14 +14,21 @@ module.exports = async (req, res) => {
     const chatId = update.message.chat.id;
     const firstName = update.message.chat.first_name || "صديقي";
 
-    const welcome = "🎉 أهلاً بيك يا " + firstName + "!\n\n" +
-      "أنا ReclaimX — منصة الأمن السيبراني والبرمجة 🛡️\n\n" +
-      "📍 كل اللي تحتاجه هنا:\n" +
-      "🔗 " + WEBSITE_URL + "\n\n" +
-      "✨ دورات احترافية\n" +
+    const welcome = "🎉 أهلاً بك يا " + firstName + "!\n\n" +
+      "أنا بوت ReclaimX — بوابتك إلى عالم الأمن السيبراني والبرمجة 🛡️\n\n" +
+      "━━━━━━━━━━━━━━\n" +
+      "🎯 ماذا نقدّم؟\n\n" +
+      "📚 دورات احترافية\n" +
       "🤖 اشتراكات الذكاء الاصطناعي\n" +
       "📱 خدمات السوشيال ميديا\n" +
-      "🔒 استشارات أمنية\n\n" +
+      "💻 تطوير الويب والتصميم\n" +
+      "🔒 استشارات أمنية\n" +
+      "━━━━━━━━━━━━━━\n\n" +
+      "🌐 اكتشف كل ما تحتاجه على موقعنا:\n" +
+      "🔗 " + WEBSITE_URL + "\n\n" +
+      "📷 تابعنا على إنستقرام:\n" +
+      "🔗 " + INSTAGRAM_URL + "\n\n" +
+      "💬 لأي استفسار: " + TELEGRAM_CONTACT + "\n\n" +
       "ابدأ رحلتك الآن 🚀";
 
     const url = "https://api.telegram.org/bot" + BOT_TOKEN + "/sendMessage";
